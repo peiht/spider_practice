@@ -1,0 +1,149 @@
+# coding: utf-8
+
+import urllib2
+from bs4 import BeautifulSoup
+
+
+class Splider:
+
+    def __init__(self):
+        self.manager = Manager()
+        self.downloader = Download()
+        self.parser = Parse()
+        self.outputer = Output()
+
+
+    def craw_search_word(self, root_url):
+        count = 0
+        self.manager.add_new_url(root_url)
+        while self.manager.has_new_url():
+            try:
+
+                if count >= 10000:
+                    break
+                print "正在加载第" + str(count) + "到" + str(count + 15) + "条数据"
+
+                current_url = self.manager.get_new_url()
+                html_content = self.downloader.download(current_url)
+                new_url, data = self.parser.parse(root_url, html_content)
+                self.manager.add_new_url(new_url)
+                # self.outputer.collect(data)
+                self.outputer.output(data)
+                count += 15
+            except urllib2.URLError, e:
+                if hasattr(e, "reason"):
+                    print "craw faild, reason: " + e.reason
+
+
+class Manager(object):
+
+    def __init__(self):
+        self.new_urls = set()
+        self.old_urls = set()
+
+
+    def add_new_url(self, new_url):
+        if new_url is None:
+            return None
+        elif new_url not in self.new_urls and new_url not in self.old_urls:
+            self.new_urls.add(new_url)
+
+
+    def has_new_url(self):
+        return len(self.new_urls) != 0
+
+
+    def get_new_url(self):
+        new_url = self.new_urls.pop()
+        self.old_urls.add(new_url)
+        return new_url
+
+
+
+class Download(object):
+
+    def download(self, url):
+        if url is None:
+            return None
+        headers = {
+                   "User-Agent" : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0) Gecko/20100101 Firefox/52.0",
+                   "Cookie" : "Hm_lvt_0c0e9d9b1e7d617b3e6842e85b9fb068=1466075280; __utma=194070582.826403744.1466075281.1466075281.1466075281.1; __utmv=194070582.|2=User%20Type=Visitor=1; signin_redirect=http%3A%2F%2Fwww.jianshu.com%2Fsearch%3Fq%3D%25E7%2594%259F%25E6%25B4%25BB%26page%3D1%26type%3Dnote; _session_id=ajBLb3h5SDArK05NdDY2V0xyUTNpQ1ZCZjNOdEhvNUNicmY0b0NtMnVuUUdkRno2emEyaFNTT3pKWTVkb3ZKT1dvbTU2c3c0VGlGS0wvUExrVW1wbkg1cDZSUTFMVVprbTJ2aXhTcTdHN2lEdnhMRUNkM1FuaW1vdFpNTDFsQXgwQlNjUnVRczhPd2FQM2sveGJCbDVpQUVWN1ZPYW1paUpVakhDbFVPbEVNRWZzUXh5R1d0LzE2RkRnc0lJSHJEOWtnaVM1ZE1yMkt5VC90K2tkeGJQMlVOQnB1Rmx2TFpxamtDQnlSakxrS1lxS0hONXZnZEx0bDR5c2w4Mm5lMitESTBidWE4NTBGNldiZXVQSjhjTGNCeGFOUlpESk9lMlJUTDVibjNBUHdDeVEzMGNaRGlwYkg5bHhNeUxJUVF2N3hYb3p5QzVNTDB4dU4zODljdExnPT0tLU81TTZybUc3MC9BZkltRDBiTEsvU2c9PQ%3D%3D--096a8e4707e00b06b996e8722a58e25aa5117ee9; CNZZDATA1258679142=1544596149-1486533130-https%253A%252F%252Fwww.baidu.com%252F%7C1486561790; _ga=GA1.2.826403744.1466075281; _gat=1",
+                   "Accept" : "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+                   }
+        content = ""
+        try:
+            request = urllib2.Request(url, headers = headers)
+            response = urllib2.urlopen(request)
+            content = response.read()
+        except urllib2.URLError, e:
+            if hasattr(e, "reason") and hasattr(e, "code"):
+                print e.code
+                print e.reason
+            else:
+                print "请求失败"
+        return content
+
+
+
+class Parse(object):
+
+    def get_new_data(self, root_url, ul):
+        data = set()
+        lis = ul.find_all("li", {"class" : "have-img"})
+        for li in lis:
+            cont = li.find("div", {"class" : "content"})
+            title = cont.find("a", {"class" : "title"}).get_text()
+            title_url = root_url + cont.a["href"]
+            data.add((title, title_url))
+        return data
+
+
+    def get_new_url(self, root_url, ul):
+        lis = ul.find_all("li", {"class" : "have-img"})
+        data_category_id = ul["data-category-id"]
+        # 最后一个文章data-recommended-at －1
+        max_id = int(lis[-1]["data-recommended-at"]) - 1
+        new_url = root_url + "?data_category_id=" + data_category_id + "&max_id=" + str(max_id)
+        return new_url
+
+
+    def parse(self, root_url, content):
+        soup = BeautifulSoup(content, "html.parser", from_encoding="utf-8")
+        div = soup.find(id="list-container")
+        ul = div.find("ul", {"class" : "note-list"})
+        new_url = self.get_new_url(root_url, ul)
+        new_data = self.get_new_data(root_url, ul)
+        return new_url, new_data
+
+
+
+
+
+class Output(object):
+
+    def __init__(self):
+        self.datas = set()
+
+
+    def collect(self, data):
+        if data is None:
+            return None
+        for item in data:
+            if item is None or item in self.datas:
+                continue
+            self.datas.add(item)
+
+
+    def output(self, data):
+        for item in data:
+            title, url = item
+            print title + "                       " + url
+
+
+
+
+if __name__ == "__main__":
+    #root_url = "http://www.jianshu.com/recommendations/notes"
+    root_url = "https://www.lagou.com/jobs/3721342.html"
+    splider = Splider()
+    splider.craw_search_word(root_url)
