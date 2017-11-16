@@ -1,18 +1,15 @@
 # coding:utf-8
 
 import MySQLdb
-import sys
-
-reload(sys)
-sys.setdefaultencoding('utf-8')
 class DB:
-    conn = MySQLdb.Connect(
+
+    conn = MySQLdb.connect(
         host='localhost',
         port=3306,
         user='root',
         passwd='root',
         db='spider'
-    )
+     )
 
     def importDb(self,job_name,job_address,job_require,job_company):
         conn = self.conn
