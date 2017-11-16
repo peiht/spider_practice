@@ -2,8 +2,13 @@
 
 import urllib2
 from bs4 import BeautifulSoup
+from mysqldb import DB
+import sys
 
-class Splider:
+reload(sys)
+sys.setdefaultencoding('utf-8')
+
+class Spider:
 
     def deal_url(self,url):
         if url is None:
@@ -17,6 +22,7 @@ class Splider:
         try:
             request = urllib2.Request(url, headers=headers)
             response = urllib2.urlopen(request)
+            response.encoding = 'utf-8'
             content = response.read()
         except urllib2.URLError, e:
             if hasattr(e, "reason") and hasattr(e, "code"):
@@ -47,7 +53,12 @@ class Splider:
 
 if __name__ =="__main__":
     root_url = "https://www.lagou.com/zhaopin/Java/?labelWords=label"
-    spider = Splider()
+    spider = Spider()
     content = spider.deal_url(root_url)
     soup = BeautifulSoup(content, "html.parser", from_encoding="utf-8")
-    data = spider.parse(soup)
+    datas = spider.parse(soup)
+    db = DB()
+    for data in datas:
+        print type(data['job'])
+        #db.importDb(data['job'],data['address'],data['require'],data['company'])
+
