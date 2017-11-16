@@ -27,20 +27,22 @@ class Splider:
         return content
 
     def parse(self,soup):
-        data = {}
+        list = []
         lips = soup.find_all('li', class_='con_list_item default_list')
         for lip in lips:
+            data = {}
             salary = lip.find('span', {'class': 'money'})
             # print salary.text
             company = lip.find('div', {'class': 'company_name'})
             require = lip.find('div', {'class': 'li_b_l'})
             job = lip.find('h3')
             address = lip.find('em')
-            print job.text
-            print address.text
-            print require.text
-            print company.text
-        return data
+            data['job'] = job.text
+            data['address'] = address.text
+            data['require'] = require.text
+            data['company'] = company.text
+            list.append(data)
+        return list
 
 
 if __name__ =="__main__":
