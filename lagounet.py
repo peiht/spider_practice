@@ -43,10 +43,10 @@ class Spider:
             require = lip.find('div', {'class': 'li_b_l'})
             job = lip.find('h3')
             address = lip.find('em')
-            data['job'] = job.text
-            data['address'] = address.text
-            data['require'] = require.text
-            data['company'] = company.text
+            data['job'] = job.text.encode('utf-8')
+            data['address'] = address.text.encode('utf-8')
+            data['require'] = require.text.encode('utf-8')
+            data['company'] = company.text.encode('utf-8')
             list.append(data)
         return list
 
@@ -59,6 +59,6 @@ if __name__ =="__main__":
     datas = spider.parse(soup)
     db = DB()
     for data in datas:
-        print type(data['job'])
-        #db.importDb(data['job'],data['address'],data['require'],data['company'])
+        #print type(data['job'])
+        db.importDb(data['job'],data['address'],data['require'],data['company'])
 
