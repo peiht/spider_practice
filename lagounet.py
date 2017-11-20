@@ -50,15 +50,29 @@ class Spider:
             list.append(data)
         return list
 
+    def get_more_url(self,soup):
+        links = soup.find_all('div',class_='pager_container')
+        list = []
+        for link in links:
+            href = link.find('a',{'class':'page_no','data-index':'2'})
+            url = href['href'].encode('utf-8')
+            n = 2
+            while n < 30:
+                print type(n)
+                url[35] = str(n)
+            print url
+
+
 
 if __name__ =="__main__":
     root_url = "https://www.lagou.com/zhaopin/Java/?labelWords=label"
     spider = Spider()
     content = spider.deal_url(root_url)
     soup = BeautifulSoup(content, "html.parser", from_encoding="utf-8")
-    datas = spider.parse(soup)
-    db = DB()
-    for data in datas:
-        #print type(data['job'])
-        db.importDb(data['job'],data['address'],data['require'],data['company'])
+    spider.get_more_url(soup)
+    # datas = spider.parse(soup)
+    # db = DB()
+    # for data in datas:
+    #     #print type(data['job'])
+    #     db.importDb(data['job'],data['address'],data['require'],data['company'])
 
