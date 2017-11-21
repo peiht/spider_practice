@@ -53,14 +53,14 @@ class Spider:
     def get_more_url(self,soup):
         links = soup.find_all('div',class_='pager_container')
         list = []
+        list.append('https://www.lagou.com/zhaopin/Java/?labelWords=label')
         for link in links:
             href = link.find('a',{'class':'page_no','data-index':'2'})
             url = href['href'].encode('utf-8')
-            n = 2
-            while n < 30:
-                print type(n)
-                url[35] = str(n)
-            print url
+            for n in range(2,31):
+                new_url = url[:35] + str(n)+'/'
+                list.append(new_url)
+        return list
 
 
 
@@ -69,10 +69,15 @@ if __name__ =="__main__":
     spider = Spider()
     content = spider.deal_url(root_url)
     soup = BeautifulSoup(content, "html.parser", from_encoding="utf-8")
-    spider.get_more_url(soup)
-    # datas = spider.parse(soup)
-    # db = DB()
-    # for data in datas:
-    #     #print type(data['job'])
-    #     db.importDb(data['job'],data['address'],data['require'],data['company'])
+    lists = spider.get_more_url(soup)
+    for list in lists:
+        content = spider.deal_url(list)
+        print '正在爬取的链接' + list
+        soup = BeautifulSoup(content, "html.parser", from_encoding="utf-8")
+        print soup
+        datas = spider.parse(soup)
+        db = DB()
+        for data in datas:
+            #print type(data['job'])
+            db.importDb(data['job'],data['address'],data['require'],data['company'])
 

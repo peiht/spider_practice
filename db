@@ -3,7 +3,7 @@ use spider;
 create table job
 (
   job_id int primary key auto_increment,
-  job_name varchar(20),
+  job_name varchar(100),
   job_address varchar(100),
   job_require varchar(200),
   job_company varchar(100)
