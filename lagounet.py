@@ -4,6 +4,7 @@ import urllib2
 from bs4 import BeautifulSoup
 from mysqldb import DB
 import sys
+import time
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -15,7 +16,7 @@ class Spider:
             return None
         headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0) Gecko/20100101 Firefox/52.0",
-            "Cookie": "Hm_lvt_0c0e9d9b1e7d617b3e6842e85b9fb068=1466075280; __utma=194070582.826403744.1466075281.1466075281.1466075281.1; __utmv=194070582.|2=User%20Type=Visitor=1; signin_redirect=http%3A%2F%2Fwww.jianshu.com%2Fsearch%3Fq%3D%25E7%2594%259F%25E6%25B4%25BB%26page%3D1%26type%3Dnote; _session_id=ajBLb3h5SDArK05NdDY2V0xyUTNpQ1ZCZjNOdEhvNUNicmY0b0NtMnVuUUdkRno2emEyaFNTT3pKWTVkb3ZKT1dvbTU2c3c0VGlGS0wvUExrVW1wbkg1cDZSUTFMVVprbTJ2aXhTcTdHN2lEdnhMRUNkM1FuaW1vdFpNTDFsQXgwQlNjUnVRczhPd2FQM2sveGJCbDVpQUVWN1ZPYW1paUpVakhDbFVPbEVNRWZzUXh5R1d0LzE2RkRnc0lJSHJEOWtnaVM1ZE1yMkt5VC90K2tkeGJQMlVOQnB1Rmx2TFpxamtDQnlSakxrS1lxS0hONXZnZEx0bDR5c2w4Mm5lMitESTBidWE4NTBGNldiZXVQSjhjTGNCeGFOUlpESk9lMlJUTDVibjNBUHdDeVEzMGNaRGlwYkg5bHhNeUxJUVF2N3hYb3p5QzVNTDB4dU4zODljdExnPT0tLU81TTZybUc3MC9BZkltRDBiTEsvU2c9PQ%3D%3D--096a8e4707e00b06b996e8722a58e25aa5117ee9; CNZZDATA1258679142=1544596149-1486533130-https%253A%252F%252Fwww.baidu.com%252F%7C1486561790; _ga=GA1.2.826403744.1466075281; _gat=1",
+            "Cookie":"sensorsdata2015jssdkcross=%7B%22distinct_id%22%3A%2215fb9e6691c4d4-08cdc28985e649-7b1f3c-2073600-15fb9e6691d387%22%2C%22%24device_id%22%3A%2215fb9e6691c4d4-08cdc28985e649-7b1f3c-2073600-15fb9e6691d387%22%2C%22props%22%3A%7B%22%24latest_traffic_source_type%22%3A%22%E4%BB%98%E8%B4%B9%E5%B9%BF%E5%91%8A%E6%B5%81%E9%87%8F%22%2C%22%24latest_referrer%22%3A%22https%3A%2F%2Fwww.baidu.com%2Fs%22%2C%22%24latest_referrer_host%22%3A%22www.baidu.com%22%2C%22%24latest_search_keyword%22%3A%22%E6%9C%AA%E5%8F%96%E5%88%B0%E5%80%BC%22%2C%22%24latest_utm_source%22%3A%22baidupc%22%2C%22%24latest_utm_medium%22%3A%22cpc%22%2C%22%24latest_utm_campaign%22%3A%22%E5%93%81%E7%89%8C%E8%AF%8D%22%2C%22%24latest_utm_term%22%3A%22bj103474%22%7D%7D; user_trace_token=20171114173957-c7081cfe-c91f-11e7-98ca-5254005c3644; LGUID=20171114173957-c7082134-c91f-11e7-98ca-5254005c3644; ab_test_random_num=0; JSESSIONID=ABAAABAAAGGABCB22417EAA04C0748133CFB8606BD1089C; X_HTTP_TOKEN=71d30b4b90f20f279c2f14eeac3e84d8; _putrc=88525859F3C7BFDD; login=true; unick=%E8%A3%B4%E6%B5%B7%E6%B6%9B; showExpriedIndex=1; showExpriedCompanyHome=1; showExpriedMyPublish=1; hasDeliver=0; TG-TRACK-CODE=index_navigation; _gid=GA1.2.57041000.1511144413; _gat=1; _ga=GA1.2.445158121.1510652435; Hm_lvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1511333705,1511335053,1511335058,1511341146; Hm_lpvt_4233e74dff0ae5bd0a3d81c6ccf756e6=1511343210; LGSID=20171122165905-645fe947-cf63-11e7-9d25-525400f775ce; LGRID=20171122173329-32bc8994-cf68-11e7-9986-5254005c3644; SEARCH_ID=940522d5512947fcac5afe0d9b447729; index_location_city=%E5%85%A8%E5%9B%BD",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
         }
         content = ""
@@ -74,10 +75,10 @@ if __name__ =="__main__":
         content = spider.deal_url(list)
         print '正在爬取的链接' + list
         soup = BeautifulSoup(content, "html.parser", from_encoding="utf-8")
-        print soup
+        #print soup
         datas = spider.parse(soup)
+        print datas
         db = DB()
         for data in datas:
-            #print type(data['job'])
             db.importDb(data['job'],data['address'],data['require'],data['company'])
 
