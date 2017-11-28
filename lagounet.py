@@ -44,10 +44,13 @@ class Spider:
             require = lip.find('div', {'class': 'li_b_l'})
             job = lip.find('h3')
             address = lip.find('em')
-            data['job'] = job.text.encode('utf-8')
-            data['address'] = address.text.encode('utf-8')
-            data['require'] = require.text.encode('utf-8')
-            data['company'] = company.text.encode('utf-8')
+            data['job'] = job.text.encode('utf-8').strip()
+            data['address'] = address.text.encode('utf-8').strip()
+            job_require = require.text.encode('utf-8').strip()
+            data['salary'] = job_require.split('\n')[0]
+            data['require'] = job_require.split('\n')[1]
+            #data['require'] = require.text.encode('utf-8').strip()
+            data['company'] = company.text.encode('utf-8').strip()
             list.append(data)
         return list
 
@@ -73,12 +76,13 @@ if __name__ =="__main__":
     lists = spider.get_more_url(soup)
     for list in lists:
         content = spider.deal_url(list)
-        print '正在爬取的链接' + list
+        print '正在爬取的链接:' + list
         soup = BeautifulSoup(content, "html.parser", from_encoding="utf-8")
         #print soup
         datas = spider.parse(soup)
-        print datas
+        #print datas
         db = DB()
         for data in datas:
-            db.importDb(data['job'],data['address'],data['require'],data['company'])
+            print data['salary']
+            db.importDb(data['salary'],data['job'],data['address'],data['require'],data['company'])
 
