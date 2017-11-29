@@ -25,3 +25,25 @@ class DB:
         conn.commit()
         conn.close()
 
+
+    def get_salary(self):
+        conn = MySQLdb.connect(
+            host='localhost',
+            port=3306,
+            user='root',
+            passwd='root',
+            db='spider'
+        )
+        cur = conn.cursor()
+        result = cur.execute("select t.job_salary from job t ")
+        # result = cur.execute("select * from job")
+        # print result
+        info = cur.fetchmany(result)
+        # for infos in info:
+        #     for job in infos:
+        #         print job
+        cur.close()
+        conn.commit()
+        conn.close()
+        return info
+
