@@ -12,12 +12,16 @@ mpl.rcParams['xtick.major.size'] = 0
 mpl.rcParams['ytick.major.size'] = 0
 
 # 包含了狗，猫和猎豹的最高奔跑速度，还有对应的可视化颜色
+#speed_map = {
+#    'dog': (48, '#7199cf'),
+#    'cat': (45, '#4fc4aa'),
+#    'cheetah': (120, '#e1a7a2')
+#}
 speed_map = {
-    'dog': (48, '#7199cf'),
-    'cat': (45, '#4fc4aa'),
-    'cheetah': (120, '#e1a7a2')
+    '4':(1,'#7199cf'),
+    '5':(5,'#7199cf'),
+    '6':(12,'#7199cf')
 }
-
 # 整体图的标题
 fig = plt.figure('Bar chart & Pie chart')
 
