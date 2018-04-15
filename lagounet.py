@@ -38,8 +38,6 @@ class Spider:
         lips = soup.find_all('li', class_='con_list_item default_list')
         for lip in lips:
             data = {}
-            salary = lip.find('span', {'class': 'money'})
-            # print salary.text
             company = lip.find('div', {'class': 'company_name'})
             require = lip.find('div', {'class': 'li_b_l'})
             job = lip.find('h3')
@@ -49,7 +47,7 @@ class Spider:
             job_require = require.text.encode('utf-8').strip()
             data['salary'] = job_require.split('\n')[0]
             data['require'] = job_require.split('\n')[1]
-            #data['require'] = require.text.encode('utf-8').strip()
+            # data['require'] = require.text.encode('utf-8').strip()
             data['company'] = company.text.encode('utf-8').strip()
             list.append(data)
         return list
@@ -83,6 +81,6 @@ if __name__ =="__main__":
         #print datas
         db = DB()
         for data in datas:
-            print data['salary']
+            print data['address']
             db.importDb(data['salary'],data['job'],data['address'],data['require'],data['company'])
 
