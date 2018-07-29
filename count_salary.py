@@ -25,7 +25,10 @@ class Analyse:
         return new
 #生成要处理的数组
     def deal_all(self,str_all):
-        return range(int(str_all[0]),int(str_all[1])+1,1)
+        if len(str_all) == 1:
+            return str_all
+        else:
+            return range(int(str_all[0]), int(str_all[1]) + 1, 1)
 
 
 if __name__ == "__main__":
